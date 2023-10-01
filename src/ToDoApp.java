@@ -12,7 +12,7 @@ public class ToDoApp {
         Scanner in = new Scanner(System.in);
         String file = "c:/temp/to_do.txt";
         String logFile = "c:/temp/to_do_log.txt";
-        String userImput = "";
+        int userImput = 0;
         boolean logChanges = false;
 
         ReadFileToArr(file, taskArr);
@@ -26,34 +26,35 @@ public class ToDoApp {
             System.out.println("[3] = Add new task.");
             System.out.println("[4] = Save tasks.");
             System.out.println("[E] = Close program.");
-
-            userImput = in.nextLine();
             System.out.println(" ");
-            CheckUserImputInt(userImput);
+
+            userImput = GetUserImputInt(in);
+
+            if (userImput == -1) {
+                System.out.println("Program closed.");
+                break;
+            }
+            else 
 
             switch (userImput) {
-                case "1": {
+                case 1: {
                     PrintArr(taskArr);
                     ChangeTaskStatus(taskArr);
                     break;
                 }
-                case "2": {
+                case 2: {
                     PrintArr(taskArr);
                     ChangeTask(taskArr);
                     break;
                 }
-                case "3": {
+                case 3: {
                     AddNewTask(taskArr);
                     break;
                 }
-                case "4": {
+                case 4: {
                     WriteArrToFile(file, logFile, taskArr, logChanges);
                     break;
                 }
-            }
-            if (userImput.toLowerCase().equals("e")) {
-                System.out.println("Program closed.");
-                break;
             }
 
         }
@@ -65,29 +66,37 @@ public class ToDoApp {
         System.out.println("To-Do lista: \n");
 
         for (int i = 0; i < arrayList.size(); i++) {
-            System.out.println("Tehtävä "+(i+1)+": "+arrayList.get(i));
+            System.out.println("Tehtävä "+(i+1)+":| "+arrayList.get(i));
         }
+        for (int i = 0; i < 11; i++){
+            System.out.print("*");
+        }
+        for (int i = 0; i < 61; i++) {
+            System.out.print("-");
+        }
+        System.out.println(" ");
+        
     }// Print ends
 
-    public static void CheckUserImputInt (String userImput) {
+    public static int GetUserImputInt (Scanner userImput) {
         while(true) {
-            try {
-                if (userImput.toLowerCase().equals("e")) {
-                    break;
-                }               
-                int testi = Integer.parseInt(userImput);
-                if (testi == 0 ) {
+            String test = userImput.nextLine();
+            if (test.toLowerCase().equals("e")) {
+                return -1;
+            }
+            try {        
+                int testInt = Integer.parseInt(test);
+                if (testInt == 0 ) {
                     System.out.println("0 is invalid number!\n");
-                    break;
-                } else {
-                    break;
+                }
+                else {
+                return testInt;
                 }
             } catch (Exception e) {
                 System.out.println("Input numbers only!\n");
-                break;
             }
         }
-    }
+    }//GetUserImputInt ends
 
     public static ArrayList<String> ReadFileToArr (String file, ArrayList<String> arr) {
          try {
@@ -129,57 +138,49 @@ public class ToDoApp {
     public static void ChangeTask(ArrayList<String> arr) {
 
         Scanner in = new Scanner(System.in);
-        String userImput = "";
+        int userImput;
         String taskChange = "";
-        String taskIndex = "";
-        int taskIndexToInt;
+        int taskIndex;
 
         while (true) {
             System.out.println("Choose task index you want to change. Press e to get back in menu.");
-            userImput = in.nextLine();
-            CheckUserImputInt(userImput);
-
-            if (userImput.toLowerCase().equals("e")) {
-                System.out.println("Returned to menu\n");
+            userImput = GetUserImputInt(in);
+            if (userImput == -1) {
+                System.out.println("\nReturned to menu.\n");
                 break;
             }
-
             taskIndex = userImput;
-            taskIndexToInt = Integer.parseInt(taskIndex);
 
             System.out.println("Insert new task and press enter.");
-            userImput = in.nextLine();
-            taskChange = userImput;
+            taskChange = in.nextLine();
+            arr.set((taskIndex - 1),taskChange);
 
-            arr.set((taskIndexToInt - 1),taskChange);
+            PrintArr(arr);
         }
     }//ChangeTask ends
 
     public static void ChangeTaskStatus (ArrayList<String> arr) {
 
         Scanner in = new Scanner(System.in);
-        String taskIndex = "";
-        int taskIndexToInt;
+        int taskIndex;
         String originalTask;
         
         while (true) {
             System.out.println("Choose task which status you want to update. Press e to get back in menu.");
-
-            taskIndex = in.nextLine();
-            CheckUserImputInt(taskIndex);
-
-            if (taskIndex.toLowerCase().equals("e")) {
+            taskIndex = GetUserImputInt(in);
+            
+            if (taskIndex == -1) {
                 break;
             }
 
-            taskIndexToInt = Integer.parseInt(taskIndex) -1;
-            originalTask = arr.get(taskIndexToInt).substring(0, arr.get(taskIndexToInt).length()-4);
+            taskIndex = taskIndex -1;
+            originalTask = arr.get(taskIndex).substring(0, arr.get(taskIndex).length()-4);
 
-            if (arr.get(taskIndexToInt).contains(" [ ]")) {
-                arr.set(taskIndexToInt, originalTask+" [x]");
+            if (arr.get(taskIndex).contains(" [ ]")) {
+                arr.set(taskIndex, originalTask+" [x]");
             }
             else {
-                arr.set(taskIndexToInt, originalTask+" [ ]");
+                arr.set(taskIndex, originalTask+" [ ]");
             }
             PrintArr(arr);
         } 
@@ -207,6 +208,5 @@ public class ToDoApp {
             }
         }
     }//AddTaskCheckBox ends
-
 
 }//Class ends
