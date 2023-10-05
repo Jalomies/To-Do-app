@@ -103,6 +103,22 @@ public class ToDoApp {
         }
     }//getUserImputInt ends
 
+    public static int indexBoundsCheck(int userInput,int maxIndex) {
+        Scanner in = new Scanner(System.in);
+        int test = userInput;
+        int indexBorder = maxIndex;
+
+        while (true) {
+            if (test > indexBorder) {
+                System.out.println("Task number invalid. Please give number between 1-"+(indexBorder)+".");
+                test = getUserImputInt(in);
+            } else {
+                break;
+            }
+        }
+        return test -1;
+    }
+
     public static ArrayList<String> readFileToArr (String file, ArrayList<String> arr) {
          try {
             FileReader reader = new FileReader(file);
@@ -154,12 +170,13 @@ public class ToDoApp {
                 System.out.println("\nReturned to menu.\n");
                 break;
             }
-            taskIndex = userImput;
+            taskIndex = indexBoundsCheck(userImput, arr.size());
+
 
             System.out.println("Insert new task and press enter.");
             taskChange = in.nextLine();
-            arr.set((taskIndex - 1),taskChange);
-
+            arr.set((taskIndex),taskChange);
+ 
             printArr(arr);
         }
     }//changeTask ends
@@ -167,18 +184,17 @@ public class ToDoApp {
     public static void changeTaskStatus (ArrayList<String> arr) {
 
         Scanner in = new Scanner(System.in);
+        int userImput;
         int taskIndex;
         String originalTask;
         
         while (true) {
             System.out.println("Choose task which status you want to update. Press e to get back in menu.");
-            taskIndex = getUserImputInt(in);
-            
-            if (taskIndex == -1) {
+            userImput = getUserImputInt(in);
+            if (userImput == -1) {
                 break;
             }
-
-            taskIndex = taskIndex -1;
+            taskIndex = indexBoundsCheck(userImput, arr.size());
             originalTask = arr.get(taskIndex).substring(0, arr.get(taskIndex).length()-4);
 
             if (arr.get(taskIndex).contains(" [ ]")) {
@@ -191,7 +207,7 @@ public class ToDoApp {
         } 
     }//changeTaskStatus ends
 
-    public static void addNewTask(ArrayList<String> arr) {
+    public static ArrayList<String> addNewTask(ArrayList<String> arr) {
 
         Scanner in = new Scanner(System.in);
         while (true){
@@ -201,7 +217,10 @@ public class ToDoApp {
                 break;
             }
             arr.add(userImput);
+            addTaskCheckBox(arr);
+            printArr(arr);
         }
+        return(arr);
     }//AddNewTasa ends
 
     public static void addTaskCheckBox(ArrayList<String> arr) {
@@ -216,12 +235,21 @@ public class ToDoApp {
 
     public static ArrayList<String> removeTask(ArrayList<String> arr) {
         Scanner in = new Scanner(System.in);
-        System.out.println("Input task number you want to remove.");
-        int taskIndex = getUserImputInt(in) - 1;
-
-        arr.remove(taskIndex);
-        printArr(arr);
+        int userImput;
+        int taskIndex;
+        while (true) {
+            System.out.println("Input task number you want to remove. Press e to return to menu.");
+            userImput = getUserImputInt(in);
+            if (userImput == -1) {
+                break;
+            }
+            else {
+                taskIndex = indexBoundsCheck(userImput, arr.size());
+                arr.remove(taskIndex);
+                printArr(arr);
+            }
+        } 
         return arr;
-    }
+    }//removeTask ends
 
 }//Class ends
